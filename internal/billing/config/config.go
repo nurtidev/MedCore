@@ -1,7 +1,9 @@
 package config
 
 import (
+	"bytes"
 	"fmt"
+	"os"
 	"strings"
 
 	sharedcfg "github.com/nurtidev/medcore/internal/shared/config"
@@ -37,13 +39,17 @@ type Config struct {
 
 func Load(path string) (*Config, error) {
 	v := viper.New()
-	v.SetConfigFile(path)
 	v.SetConfigType("yaml")
 	v.AutomaticEnv()
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	if err := v.ReadInConfig(); err != nil {
+	raw, err := os.ReadFile(path)
+	if err != nil {
 		return nil, fmt.Errorf("billing/config.Load: read: %w", err)
+	}
+
+	if err := v.ReadConfig(bytes.NewBufferString(sharedcfg.ExpandEnvPlaceholders(string(raw)))); err != nil {
+		return nil, fmt.Errorf("billing/config.Load: parse: %w", err)
 	}
 
 	var cfg Config

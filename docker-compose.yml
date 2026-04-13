@@ -140,7 +140,7 @@ services:
       dockerfile: deployments/docker/billing.Dockerfile
     ports:
       - "8082:8082"
-      - "9092:9092"
+      - "19092:9092"
     environment:
       CONFIG_PATH: configs/billing.yaml
       DATABASE_URL: postgres://medcore:medcore@postgres:5432/medcore?sslmode=disable

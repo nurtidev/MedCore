@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -17,6 +18,7 @@ import (
 	"github.com/nurtidev/medcore/internal/analytics/repository"
 	"github.com/nurtidev/medcore/internal/analytics/service"
 	"github.com/nurtidev/medcore/internal/analytics/worker"
+	sharedcfg "github.com/nurtidev/medcore/internal/shared/config"
 	"github.com/nurtidev/medcore/internal/shared/database"
 	"github.com/nurtidev/medcore/internal/shared/kafka"
 	"github.com/nurtidev/medcore/internal/shared/logger"
@@ -154,13 +156,18 @@ type analyticsConfig struct {
 
 func loadConfig(path string) analyticsConfig {
 	v := viper.New()
-	v.SetConfigFile(path)
 	v.SetConfigType("yaml")
 	v.AutomaticEnv()
 
-	if err := v.ReadInConfig(); err != nil {
+	raw, err := os.ReadFile(path)
+	if err != nil {
 		l := zerolog.New(os.Stderr).With().Timestamp().Logger()
 		l.Fatal().Err(err).Str("path", path).Msg("read config")
+	}
+
+	if err := v.ReadConfig(bytes.NewBufferString(sharedcfg.ExpandEnvPlaceholders(string(raw)))); err != nil {
+		l := zerolog.New(os.Stderr).With().Timestamp().Logger()
+		l.Fatal().Err(err).Str("path", path).Msg("parse config")
 	}
 
 	dialTimeout, _ := time.ParseDuration(v.GetString("clickhouse.dial_timeout"))

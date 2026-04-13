@@ -1,7 +1,9 @@
 package config
 
 import (
+	"bytes"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -61,16 +63,19 @@ type OTelConfig struct {
 
 func Load(path string) (*Config, error) {
 	v := viper.New()
-
-	v.SetConfigFile(path)
 	v.SetConfigType("yaml")
 
 	// env переменные имеют приоритет над yaml
 	v.AutomaticEnv()
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	if err := v.ReadInConfig(); err != nil {
+	raw, err := os.ReadFile(path)
+	if err != nil {
 		return nil, fmt.Errorf("config.Load: read config: %w", err)
+	}
+
+	if err := v.ReadConfig(bytes.NewBufferString(ExpandEnvPlaceholders(string(raw)))); err != nil {
+		return nil, fmt.Errorf("config.Load: parse config: %w", err)
 	}
 
 	var cfg Config
