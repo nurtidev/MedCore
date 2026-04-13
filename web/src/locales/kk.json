@@ -1,0 +1,97 @@
+{
+  "nav": {
+    "dashboard": "Басқару тақтасы",
+    "analytics": "Аналитика",
+    "revenue": "Табыс",
+    "doctors": "Дәрігерлер",
+    "schedule": "Кесте",
+    "billing": "Биллинг",
+    "invoices": "Шоттар",
+    "subscription": "Жазылым",
+    "users": "Пайдаланушылар",
+    "integrations": "Интеграциялар",
+    "lab_results": "Талдау нәтижелері",
+    "logout": "Шығу"
+  },
+  "auth": {
+    "login": "Кіру",
+    "logout": "Шығу",
+    "email": "Email",
+    "password": "Құпия сөз",
+    "sign_in": "Жүйеге кіру",
+    "change_password": "Құпия сөзді өзгерту",
+    "old_password": "Ағымдағы құпия сөз",
+    "new_password": "Жаңа құпия сөз",
+    "confirm_password": "Құпия сөзді растаңыз"
+  },
+  "roles": {
+    "doctor": "Дәрігер",
+    "coordinator": "Үйлестіруші",
+    "admin": "Әкімші",
+    "super_admin": "Супер-әкімші"
+  },
+  "invoice_status": {
+    "draft": "Жоба",
+    "sent": "Жіберілген",
+    "paid": "Төленген",
+    "overdue": "Мерзімі өткен",
+    "voided": "Жойылған"
+  },
+  "payment_status": {
+    "pending": "Күтуде",
+    "processing": "Өңделуде",
+    "completed": "Аяқталды",
+    "failed": "Қате",
+    "refunded": "Қайтарылды"
+  },
+  "plan_tier": {
+    "basic": "Негізгі",
+    "pro": "Кәсіби",
+    "enterprise": "Корпоративтік"
+  },
+  "dashboard": {
+    "title": "Басқару тақтасы",
+    "revenue_month": "Айлық табыс",
+    "patients_count": "Науқастар",
+    "fill_rate": "Толтырылуы",
+    "no_show_rate": "Келмеді",
+    "recent_invoices": "Соңғы шоттар",
+    "current_plan": "Ағымдағы тариф",
+    "doctors_used": "Дәрігерлер",
+    "loading": "Деректер жүктелуде..."
+  },
+  "common": {
+    "save": "Сақтау",
+    "cancel": "Болдырмау",
+    "delete": "Жою",
+    "edit": "Өңдеу",
+    "create": "Жасау",
+    "search": "Іздеу",
+    "filter": "Сүзгі",
+    "export": "Экспорт",
+    "download": "Жүктеу",
+    "loading": "Жүктелуде...",
+    "no_data": "Деректер жоқ",
+    "error": "Қате",
+    "success": "Сәтті",
+    "confirm": "Растау",
+    "close": "Жабу",
+    "of": "ішінен",
+    "total": "Барлығы",
+    "actions": "Әрекеттер",
+    "status": "Күй",
+    "date": "Күні",
+    "amount": "Сома",
+    "period": {
+      "month": "Ай",
+      "quarter": "Тоқсан",
+      "year": "Жыл"
+    }
+  },
+  "errors": {
+    "unauthorized": "Рұқсат жоқ",
+    "not_found": "Табылмады",
+    "server_error": "Сервер қатесі",
+    "network_error": "Желі қатесі"
+  }
+}

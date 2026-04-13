@@ -1,0 +1,53 @@
+server:
+  http_port: 8083
+  grpc_port: 9093
+  read_timeout: 30s
+  write_timeout: 30s
+
+database:
+  dsn: "${DATABASE_URL}"
+  max_open_conns: 25
+  max_idle_conns: 5
+
+redis:
+  addr: "${REDIS_ADDR}"
+
+kafka:
+  brokers: "${KAFKA_BROKERS}"
+  group_id: "integration-service"
+
+egov:
+  api_url: "${EGOV_API_URL}"
+  api_key: "${EGOV_API_KEY}"
+  timeout: "10s"
+
+damumed:
+  api_url: "${DAMUMED_API_URL}"
+  api_key: "${DAMUMED_API_KEY}"
+
+idoctor:
+  api_url: "${IDOCTOR_API_URL}"
+  webhook_secret: "${IDOCTOR_WEBHOOK_SECRET}"
+
+olymp_lab:
+  api_url: "${OLYMP_API_URL}"
+  api_key: "${OLYMP_API_KEY}"
+
+invivo_lab:
+  api_url: "${INVIVO_API_URL}"
+  api_key: "${INVIVO_API_KEY}"
+
+sync:
+  interval: "30s"
+
+auth_grpc:
+  addr: "auth-service:9091"
+
+webhook:
+  idoctor_secret: "${IDOCTOR_WEBHOOK_SECRET}"
+  olymp_secret: "${OLYMP_WEBHOOK_SECRET}"
+  invivo_secret: "${INVIVO_WEBHOOK_SECRET}"
+
+log:
+  level: "info"
+  format: "json"

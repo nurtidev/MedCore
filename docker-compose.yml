@@ -1,0 +1,266 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MedCore — local development stack
+# Usage: make up
+# ─────────────────────────────────────────────────────────────────────────────
+
+x-service-defaults: &service-defaults
+  restart: unless-stopped
+  networks:
+    - medcore
+
+x-go-build: &go-build
+  build:
+    context: .
+  <<: *service-defaults
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+
+  # ── Infrastructure ──────────────────────────────────────────────────────────
+
+  postgres:
+    image: postgres:16-alpine
+    <<: *service-defaults
+    environment:
+      POSTGRES_USER: medcore
+      POSTGRES_PASSWORD: medcore
+      POSTGRES_DB: medcore
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medcore"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    <<: *service-defaults
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    <<: *service-defaults
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    <<: *service-defaults
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:29092"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.3-alpine
+    <<: *service-defaults
+    ports:
+      - "8123:8123"   # HTTP
+      - "9000:9000"   # native
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    environment:
+      CLICKHOUSE_USER: medcore
+      CLICKHOUSE_PASSWORD: medcore
+      CLICKHOUSE_DB: medcore
+    healthcheck:
+      test: ["CMD-SHELL", "clickhouse-client --user medcore --password medcore --query 'SELECT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    <<: *service-defaults
+    ports:
+      - "3000:3000"
+    command:
+      - "gotenberg"
+      - "--chromium-disable-routes=true"
+      - "--libreoffice-disable-routes=true"
+
+  # ── Application services ────────────────────────────────────────────────────
+
+  auth-service:
+    <<: *go-build
+    build:
+      context: .
+      dockerfile: deployments/docker/auth.Dockerfile
+    ports:
+      - "8081:8081"
+      - "9091:9091"
+    environment:
+      CONFIG_PATH: configs/auth.yaml
+      DATABASE_URL: postgres://medcore:medcore@postgres:5432/medcore?sslmode=disable
+      REDIS_ADDR: redis:6379
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-in-production}
+      IIN_ENCRYPTION_KEY: ${IIN_ENCRYPTION_KEY:-0000000000000000000000000000000000000000000000000000000000000000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  billing-service:
+    <<: *go-build
+    build:
+      context: .
+      dockerfile: deployments/docker/billing.Dockerfile
+    ports:
+      - "8082:8082"
+      - "9092:9092"
+    environment:
+      CONFIG_PATH: configs/billing.yaml
+      DATABASE_URL: postgres://medcore:medcore@postgres:5432/medcore?sslmode=disable
+      KAFKA_BROKERS: kafka:29092
+      KASPI_API_URL: ${KASPI_API_URL:-https://staging.kaspi.kz}
+      KASPI_MERCHANT_ID: ${KASPI_MERCHANT_ID:-test}
+      KASPI_SECRET_KEY: ${KASPI_SECRET_KEY:-test}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_placeholder}
+      GOTENBERG_URL: http://gotenberg:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+
+  integration-service:
+    <<: *go-build
+    build:
+      context: .
+      dockerfile: deployments/docker/integration.Dockerfile
+    ports:
+      - "8083:8083"
+      - "9093:9093"
+    environment:
+      CONFIG_PATH: configs/integration.yaml
+      DATABASE_URL: postgres://medcore:medcore@postgres:5432/medcore?sslmode=disable
+      REDIS_ADDR: redis:6379
+      KAFKA_BROKERS: kafka:29092
+      EGOV_API_URL: ${EGOV_API_URL:-https://idp.egov.kz}
+      EGOV_API_KEY: ${EGOV_API_KEY:-test}
+      DAMUMED_API_URL: ${DAMUMED_API_URL:-https://api.damumed.kz}
+      DAMUMED_API_KEY: ${DAMUMED_API_KEY:-test}
+      IDOCTOR_API_URL: ${IDOCTOR_API_URL:-https://api.idoctor.kz}
+      IDOCTOR_WEBHOOK_SECRET: ${IDOCTOR_WEBHOOK_SECRET:-test}
+      OLYMP_API_URL: ${OLYMP_API_URL:-https://api.olymplab.kz}
+      OLYMP_API_KEY: ${OLYMP_API_KEY:-test}
+      INVIVO_API_URL: ${INVIVO_API_URL:-https://api.invivo.kz}
+      INVIVO_API_KEY: ${INVIVO_API_KEY:-test}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+
+  analytics-service:
+    <<: *go-build
+    build:
+      context: .
+      dockerfile: deployments/docker/analytics.Dockerfile
+    ports:
+      - "8084:8084"
+      - "9094:9094"
+    environment:
+      CONFIG_PATH: configs/analytics.yaml
+      CLICKHOUSE_DSN: clickhouse://medcore:medcore@clickhouse:9000/medcore
+      REDIS_ADDR: redis:6379
+      KAFKA_BROKERS: kafka:29092
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-in-production}
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+
+  gateway:
+    <<: *go-build
+    build:
+      context: .
+      dockerfile: deployments/docker/gateway.Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      CONFIG_PATH: configs/gateway.yaml
+      REDIS_ADDR: redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      billing-service:
+        condition: service_started
+      integration-service:
+        condition: service_started
+      analytics-service:
+        condition: service_started
+
+  web:
+    build:
+      context: .
+      dockerfile: deployments/docker/web.Dockerfile
+    <<: *service-defaults
+    ports:
+      - "80:80"
+    depends_on:
+      - gateway
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ── Volumes & Networks ────────────────────────────────────────────────────────
+
+volumes:
+  postgres_data:
+  redis_data:
+  zookeeper_data:
+  clickhouse_data:
+
+networks:
+  medcore:
+    driver: bridge

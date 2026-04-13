@@ -1,0 +1,42 @@
+{
+  "name": "web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@vee-validate/zod": "^4.15.1",
+    "@vueuse/core": "^14.2.1",
+    "axios": "^1.15.0",
+    "echarts": "^6.0.0",
+    "pinia": "^3.0.4",
+    "vee-validate": "^4.15.1",
+    "vue": "^3.5.32",
+    "vue-echarts": "^8.0.1",
+    "vue-i18n": "^9.14.5",
+    "vue-router": "^4.6.4",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/node": "^24.12.2",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vitest/coverage-v8": "^4.1.4",
+    "@vue/test-utils": "^2.4.6",
+    "@vue/tsconfig": "^0.9.1",
+    "autoprefixer": "^10.4.27",
+    "happy-dom": "^20.8.9",
+    "tailwindcss": "^4.2.2",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.4",
+    "vitest": "^3.2.4",
+    "vue-tsc": "^3.2.6"
+  }
+}

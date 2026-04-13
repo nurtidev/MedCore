@@ -1,0 +1,49 @@
+# Binaries
+bin/
+dist/
+*.exe
+*.out
+
+# Build artifacts per service
+cmd/auth/auth-service
+cmd/billing/billing-service
+cmd/integration/integration-service
+cmd/analytics/analytics-service
+cmd/gateway/gateway
+
+# Go
+*.test
+coverage.out
+coverage.html
+
+# Environment variables (секреты никогда не коммитим)
+.env
+.env.local
+.env.*.local
+configs/*.local.yaml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Generated protobuf
+pkg/proto/**/*.pb.go
+pkg/proto/**/*_grpc.pb.go
+
+# Generated mocks
+internal/**/mocks/
+
+# Logs
+*.log
+
+# Goose migration lock
+*.lock

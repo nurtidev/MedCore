@@ -1,0 +1,32 @@
+server:
+  http_port: 8082
+  grpc_port: 9092
+  read_timeout: 30s
+  write_timeout: 30s
+
+database:
+  dsn: "${DATABASE_URL}"
+  max_open_conns: 25
+  max_idle_conns: 5
+
+kafka:
+  brokers: "${KAFKA_BROKERS}"
+  topics:
+    payment_completed: "payment.completed"
+    subscription_expired: "subscription.expired"
+
+kaspi:
+  api_url: "${KASPI_API_URL}"
+  merchant_id: "${KASPI_MERCHANT_ID}"
+  secret_key: "${KASPI_SECRET_KEY}"
+
+stripe:
+  secret_key: "${STRIPE_SECRET_KEY}"
+  webhook_secret: "${STRIPE_WEBHOOK_SECRET}"
+
+auth_grpc:
+  addr: "auth-service:9091"
+
+log:
+  level: "info"
+  format: "json"

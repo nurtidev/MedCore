@@ -1,0 +1,97 @@
+{
+  "nav": {
+    "dashboard": "Панель управления",
+    "analytics": "Аналитика",
+    "revenue": "Выручка",
+    "doctors": "Врачи",
+    "schedule": "Расписание",
+    "billing": "Биллинг",
+    "invoices": "Счета",
+    "subscription": "Подписка",
+    "users": "Пользователи",
+    "integrations": "Интеграции",
+    "lab_results": "Результаты анализов",
+    "logout": "Выйти"
+  },
+  "auth": {
+    "login": "Войти",
+    "logout": "Выйти",
+    "email": "Email",
+    "password": "Пароль",
+    "sign_in": "Войти в систему",
+    "change_password": "Изменить пароль",
+    "old_password": "Текущий пароль",
+    "new_password": "Новый пароль",
+    "confirm_password": "Подтвердите пароль"
+  },
+  "roles": {
+    "doctor": "Врач",
+    "coordinator": "Координатор",
+    "admin": "Администратор",
+    "super_admin": "Супер-администратор"
+  },
+  "invoice_status": {
+    "draft": "Черновик",
+    "sent": "Отправлен",
+    "paid": "Оплачен",
+    "overdue": "Просрочен",
+    "voided": "Аннулирован"
+  },
+  "payment_status": {
+    "pending": "Ожидает",
+    "processing": "Обрабатывается",
+    "completed": "Завершён",
+    "failed": "Ошибка",
+    "refunded": "Возврат"
+  },
+  "plan_tier": {
+    "basic": "Базовый",
+    "pro": "Профессиональный",
+    "enterprise": "Корпоративный"
+  },
+  "dashboard": {
+    "title": "Панель управления",
+    "revenue_month": "Выручка за месяц",
+    "patients_count": "Пациентов",
+    "fill_rate": "Заполняемость",
+    "no_show_rate": "Не явились",
+    "recent_invoices": "Последние счета",
+    "current_plan": "Текущий тариф",
+    "doctors_used": "Врачей",
+    "loading": "Загрузка данных..."
+  },
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "export": "Экспорт",
+    "download": "Скачать",
+    "loading": "Загрузка...",
+    "no_data": "Нет данных",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "confirm": "Подтвердить",
+    "close": "Закрыть",
+    "of": "из",
+    "total": "Всего",
+    "actions": "Действия",
+    "status": "Статус",
+    "date": "Дата",
+    "amount": "Сумма",
+    "period": {
+      "month": "Месяц",
+      "quarter": "Квартал",
+      "year": "Год"
+    }
+  },
+  "errors": {
+    "unauthorized": "Нет доступа",
+    "not_found": "Не найдено",
+    "server_error": "Ошибка сервера",
+    "network_error": "Ошибка сети"
+  }
+}

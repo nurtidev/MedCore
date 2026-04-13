@@ -1,0 +1,15 @@
+syntax = "proto3";
+package billing;
+option go_package = "github.com/nurtidev/medcore/pkg/proto/billing";
+
+service BillingService {
+    rpc CheckSubscriptionAccess(CheckSubscriptionAccessRequest) returns (CheckSubscriptionAccessResponse);
+}
+
+message CheckSubscriptionAccessRequest {
+    string clinic_id = 1;
+}
+
+message CheckSubscriptionAccessResponse {
+    bool active = 1;
+}
