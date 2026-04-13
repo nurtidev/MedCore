@@ -119,8 +119,9 @@ func TestAuthMiddleware_InvalidToken_Returns401(t *testing.T) {
 }
 
 // TestAuthMiddleware_ValidToken_SetsHeaders verifies that a valid token causes
-// X-User-ID / X-Clinic-ID / X-User-Role to be forwarded and Authorization
-// to be stripped.
+// X-User-ID / X-Clinic-ID / X-User-Role to be forwarded while preserving
+// the original Authorization header for upstream services that still
+// validate JWTs themselves.
 func TestAuthMiddleware_ValidToken_SetsHeaders(t *testing.T) {
 	next := &nextHandler{}
 	client := &mockAuthClient{
@@ -145,5 +146,5 @@ func TestAuthMiddleware_ValidToken_SetsHeaders(t *testing.T) {
 	assert.Equal(t, "user-42", next.userID)
 	assert.Equal(t, "clinic-7", next.clinicID)
 	assert.Equal(t, "doctor", next.role)
-	assert.Empty(t, next.authHdr, "Authorization header must be stripped before upstream")
+	assert.Equal(t, "Bearer valid-token", next.authHdr, "Authorization header must be preserved for upstream JWT middleware")
 }

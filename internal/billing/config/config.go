@@ -31,6 +31,7 @@ type Config struct {
 	Server   sharedcfg.ServerConfig   `mapstructure:"server"`
 	Database sharedcfg.DatabaseConfig `mapstructure:"database"`
 	Kafka    sharedcfg.KafkaConfig    `mapstructure:"kafka"`
+	JWT      sharedcfg.JWTConfig      `mapstructure:"jwt"`
 	Log      sharedcfg.LogConfig      `mapstructure:"log"`
 	Kaspi    KaspiConfig              `mapstructure:"kaspi"`
 	Stripe   StripeConfig             `mapstructure:"stripe"`

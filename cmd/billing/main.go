@@ -125,7 +125,7 @@ func main() {
 	}()
 
 	// ── HTTP server ───────────────────────────────────────────────────────────
-	httpHandler := handler.NewHTTPHandler(svc, cfg.Kafka.Topics["jwt_secret"])
+	httpHandler := handler.NewHTTPHandler(svc, cfg.JWT.Secret)
 	httpServer := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.Server.HTTPPort),
 		Handler:      httpHandler.Router(),

@@ -68,9 +68,6 @@ func Auth(authClient authpb.AuthServiceClient, grpcTimeout time.Duration) func(h
 			r.Header.Set("X-Clinic-ID", resp.GetClinicId())
 			r.Header.Set("X-User-Role", resp.GetRole())
 
-			// Strip the original Authorization header — upstreams trust X-User-ID.
-			r.Header.Del("Authorization")
-
 			next.ServeHTTP(w, r)
 		})
 	}

@@ -145,6 +145,7 @@ services:
       CONFIG_PATH: configs/billing.yaml
       DATABASE_URL: postgres://medcore:medcore@postgres:5432/medcore?sslmode=disable
       KAFKA_BROKERS: kafka:29092
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-in-production}
       KASPI_API_URL: ${KASPI_API_URL:-https://staging.kaspi.kz}
       KASPI_MERCHANT_ID: ${KASPI_MERCHANT_ID:-test}
       KASPI_SECRET_KEY: ${KASPI_SECRET_KEY:-test}

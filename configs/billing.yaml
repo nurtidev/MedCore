@@ -27,6 +27,9 @@ stripe:
 auth_grpc:
   addr: "auth-service:9091"
 
+jwt:
+  secret: "${JWT_SECRET}"
+
 log:
   level: "info"
   format: "json"

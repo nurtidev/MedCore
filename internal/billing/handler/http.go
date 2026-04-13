@@ -104,8 +104,12 @@ func (h *HTTPHandler) jwtMiddleware(next http.Handler) http.Handler {
 		ctx := r.Context()
 		if v, ok := claims["clinic_id"].(string); ok {
 			ctx = context.WithValue(ctx, ctxClinicID, v)
+		} else if v, ok := claims["cid"].(string); ok {
+			ctx = context.WithValue(ctx, ctxClinicID, v)
 		}
 		if v, ok := claims["sub"].(string); ok {
+			ctx = context.WithValue(ctx, ctxUserID, v)
+		} else if v, ok := claims["uid"].(string); ok {
 			ctx = context.WithValue(ctx, ctxUserID, v)
 		}
 		if v, ok := claims["role"].(string); ok {
